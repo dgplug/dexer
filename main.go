@@ -60,11 +60,13 @@ func fileIndexing(indexfilename string, fileIndexer []FileIndexer) error {
 	for _, fileIndex := range fileIndexer {
 		index.Index(fileIndex.Filename, fileIndex.FileContent)
 	}
+	defer index.Close()
 	return nil
 }
 
 func searchResults(indexFilename string, searchWord string) *bleve.SearchResult {
 	index, _ := bleve.Open(indexFilename)
+	defer index.Close()
 	query := bleve.NewQueryStringQuery(searchWord)
 	searchRequest := bleve.NewSearchRequest(query)
 	searchResult, _ := index.Search(searchRequest)
