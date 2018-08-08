@@ -1,0 +1,5 @@
+{
+    "RootDirectory": "..",
+    "IndexFilename": "irclogs.bleve",
+    "Port": ":8000"
+}
