@@ -13,19 +13,16 @@ find the files in which a word has occured in the file.
 
 This assumes that you have `Go` installed and setup
 
-We need to install `mux`, `bleve` and `handler`.
-
-`go get -u github.com/gorilla/mux`
-
-`go get -u github.com/blevesearch/bleve`
-
-`go get -u github.com/gorilla/handlers`
+All dependecies are added in `dep` and we need to make sure we install
+`fresh` although it is already added to the lock.
 
 #### Development
 
 We need to make a directory that has to be indexed and put few files in it.
 
 Put that as the `RootDirectory` in the `config.json` file.
+
+I create a `log` directory and put it in the conf.
 
 For development purpose you can run `go run main.go`
 
@@ -37,6 +34,7 @@ Then you can search the file with `localhost:8000/search/{query}`
 
 `cd` in the directory and run
 
-`go build`
+`fresh -c fresh.conf`
 
-This creates a binary in the directory now we can just run it as `./file-indexer`
+This will run the server and start watching for any changes in the file, it does two things
+hot-reloading and auto-indexing.
