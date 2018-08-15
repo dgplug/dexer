@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -52,6 +53,10 @@ func getContent(name string) string {
 }
 
 func fileIndexing(indexfilename string, fileIndexer []FileIndexer) error {
+	err := deleteExistingIndex(config.IndexFilename)
+	if err != nil {
+		return err
+	}
 	mapping := bleve.NewIndexMapping()
 	index, err := bleve.New(indexfilename, mapping)
 	if err != nil {
@@ -94,10 +99,18 @@ func fileNameContentMap() []FileIndexer {
 	return fileIndexer
 }
 
-// IndexFile is the controller that helps with indexing the file
-func IndexFile(w http.ResponseWriter, r *http.Request) {
+func creatIndex() error {
 	var fileIndexer = fileNameContentMap()
 	err := fileIndexing(config.IndexFilename, fileIndexer)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// IndexFile is the controller that helps with indexing the file
+func IndexFile(w http.ResponseWriter, r *http.Request) {
+	err := creatIndex()
 	json.NewEncoder(w).Encode(err)
 	return
 }
@@ -110,7 +123,22 @@ func SearchFile(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+// Check if the index exist if it does, then flushes it off
+func deleteExistingIndex(name string) error {
+	_, err := os.Stat(name)
+	if !os.IsNotExist(err) {
+		if err := os.RemoveAll(name); err != nil {
+			return fmt.Errorf("Can't Delete file: %v", err)
+		}
+	}
+	return nil
+}
+
 func main() {
+	fmt.Println("Refreshing the index")
+	err := creatIndex()
+	checkerr(err)
+	fmt.Printf("serving on %v \n", config.Port)
 	router := mux.NewRouter()
 	router.HandleFunc("/index", IndexFile).Methods("GET")
 	router.HandleFunc("/search/{query}", SearchFile).Methods("GET")
