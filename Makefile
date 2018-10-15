@@ -5,4 +5,4 @@ dev:
 	make clean
 	mkdir logs 
 	cp config.json logs/
-	go run main.go
+	fresh -c fresh.conf
