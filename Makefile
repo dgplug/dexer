@@ -3,7 +3,8 @@ clean:
 
 dev:
 	make clean
-	mkdir logs 
+	mkdir logs
+	go get github.com/pilu/fresh
 	cp config.json logs/
 	./scripts/helper.py logs/
 
