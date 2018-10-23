@@ -14,6 +14,8 @@ This is a way of trying to index the logs file in dgplug so that we can easily f
 
 This assumes that you have `Go` installed and setup.
 
+`pip3` and `python3` is what we need for development purpose.
+
 All dependecies are added in `dep` and we need to make sure we install `fresh` although it is already added to the lock.
 
 
