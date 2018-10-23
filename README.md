@@ -17,32 +17,29 @@ This assumes that you have `Go` installed and setup.
 All dependecies are added in `dep` and we need to make sure we install `fresh` although it is already added to the lock.
 
 
-
 #### Development
 
-We need to make a directory that has to be indexed and put few files in it. 
+This is a service and it doesn't have any `UI` so in order to use this project or hack on the project we need a way to communicate with it. We can use the good old `curl` but let's be a little adventurous and use [POSTMAN](https://www.getpostman.com/) for the same.
 
-Put that as the `RootDirectory` in the `config.json` file.
-
-We create a `log` directory and put it in the conf.
-
-For development purpose you can run `go run main.go`
-
-Now you need to create the index first so visit `localhost:8000/index`
-
-Then you can search the file with `localhost:8000/search/{query}`
-
-For ease of use we have included a `Makefile` with the following targets
+Make sure to carry on the following steps:
 
 ```bash
 
-make clean # for cleaning up  
+make clean # for cleaning up
 make dev # for development purposes
-make build # for normal usage
+make logs # for getting the dummy directory ready
 
 ```
 
-#### Usage
-`cd` in the directory and run`fresh -c fresh.conf`
-This will run the server and start watching for any changes in the file, it does two things
-hot-reloading and auto-indexing.
+Once you did this you will notice that there is a `logs` directory created with different folder and each folder will have different files. Remember all these files are dummy files and they have some random junk.
+
+Then run `make build` this should start the server. Once everything is working fine install the postman plugin for your browser. And from that plugin you need to hit the endpoint as:
+
+`localhost:8000/search/american`
+
+Here `american` is the query word that I passed, make sure to open any file in the `logs/` directory and find a word to search. It will look like this:
+
+![Missing screenshot](images/postman_query.png "Postman Screenshot")
+
+
+This also has the response `file-indexer` sends back.
