@@ -41,7 +41,7 @@ Then run `make build` this should start the server. Once everything is working f
 
 Here `american` is the query word that I passed, make sure to open any file in the `logs/` directory and find a word to search. It will look like this:
 
-![Missing screenshot](images/postman_query.png "Postman Screenshot")
+![Missing screenshot](https://image.ibb.co/cWP5TA/postman-query.png"Postman Screenshot")
 
 
 This also has the response `file-indexer` sends back.
