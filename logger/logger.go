@@ -2,6 +2,7 @@ package logger
 
 import (
 	"os"
+	"time"
 )
 
 type Logger struct {
@@ -24,7 +25,13 @@ func (l *Logger) Must(e error, logstring string) {
 		panic(e)
 	}
 
-	l.Write([]byte(logstring + "\n"))
+	l.Write([]byte(formatLog(logstring) + "\n"))
+}
+
+func formatLog(logstring string) string {
+	tm := time.Now()
+	logtime := tm.Format("2/Jan/2006:15:04:05 -0700")
+	return "[" + logtime + "] " + logstring
 }
 
 func NewLogger(fname string) *Logger {
