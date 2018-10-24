@@ -19,6 +19,12 @@ var configFlag = flag.String("config", "NULL", "To pass a different configuratio
 var config conf.Configuration
 var lg *logger.Logger
 
+func init() {
+	flag.Parse()
+	lg = logger.NewLogger("logfile")
+	config = conf.NewConfig(*configFlag, lg)
+}
+
 // IndexFile is the controller that helps with indexing the file
 func IndexFile(w http.ResponseWriter, r *http.Request) {
 	err := indexer.NewIndex(config, lg)
@@ -35,9 +41,6 @@ func SearchFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	flag.Parse()
-	lg = logger.NewLogger("logfile")
-	config = conf.NewConfig(*configFlag, lg)
 	fmt.Println("Refreshing the index")
 	err := indexer.NewIndex(config, lg)
 	lg.Must(err, "Index Succesfully Created")
