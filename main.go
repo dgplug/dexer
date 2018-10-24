@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/farhaanbukhsh/file-indexer/conf"
 	"github.com/farhaanbukhsh/file-indexer/indexer"
@@ -44,6 +43,7 @@ func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/index", IndexFile).Methods("GET")
 	router.HandleFunc("/search/{query}", SearchFile).Methods("GET")
-	loggedRouter := handlers.LoggingHandler(os.Stdout, router)
+	lg := logger.NewLogger("logfile")
+	loggedRouter := handlers.LoggingHandler(lg, router)
 	log.Fatal(http.ListenAndServe(config.Port, loggedRouter))
 }
