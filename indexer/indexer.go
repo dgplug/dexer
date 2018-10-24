@@ -16,6 +16,11 @@ type FileIndexer struct {
 	FileContent string
 }
 
+type FileIndexerArray struct {
+	IndexrArray     []FileIndexer
+	FileIndexLogger *logger.Logger
+}
+
 func Search(indexFilename string, searchWord string) *bleve.SearchResult {
 	index, _ := bleve.Open(indexFilename)
 	defer index.Close()
@@ -25,7 +30,7 @@ func Search(indexFilename string, searchWord string) *bleve.SearchResult {
 	return result
 }
 
-func fileIndexing(fileIndexer []FileIndexer, c conf.Configuration) error {
+func fileIndexing(fileIndexer FileIndexerArray, c conf.Configuration) error {
 	err := utility.DeleteExistingIndex(c.IndexFilename)
 	if err != nil {
 		return err
@@ -35,17 +40,19 @@ func fileIndexing(fileIndexer []FileIndexer, c conf.Configuration) error {
 	if err != nil {
 		return err
 	}
-	for _, fileIndex := range fileIndexer {
+	for _, fileIndex := range fileIndexer.IndexrArray {
 		index.Index(fileIndex.FileName, fileIndex.FileContent)
 	}
 	defer index.Close()
 	return nil
 }
 
-func fileNameContentMap(c conf.Configuration) []FileIndexer {
+func fileNameContentMap(c conf.Configuration, lg *logger.Logger) FileIndexerArray {
 	var ROOTPATH = c.RootDirectory
 	var files []string
-	var fileIndexer []FileIndexer
+	fileIndexer := FileIndexerArray{
+		FileIndexLogger: lg,
+	}
 
 	err := filepath.Walk(ROOTPATH, func(path string, info os.FileInfo, err error) error {
 		if !info.IsDir() {
@@ -53,11 +60,12 @@ func fileNameContentMap(c conf.Configuration) []FileIndexer {
 		}
 		return nil
 	})
-	logger.Must(err)
+	fileIndexer.FileIndexLogger.Must(err)
 	for _, filename := range files {
-		content := utility.GetContent(filename)
+		content, err := utility.GetContent(filename)
+		fileIndexer.FileIndexLogger.Must(err)
 		filesIndex := NewFileIndexer(filename, content)
-		fileIndexer = append(fileIndexer, filesIndex)
+		fileIndexer.IndexrArray = append(fileIndexer.IndexrArray, filesIndex)
 	}
 	return fileIndexer
 }
@@ -73,8 +81,8 @@ func NewFileIndexer(fname, fcontent string) FileIndexer {
 }
 
 // NewIndex is a function to create new indexes
-func NewIndex(c conf.Configuration) error {
-	fileIndexer := fileNameContentMap(c)
+func NewIndex(c conf.Configuration, lg *logger.Logger) error {
+	fileIndexer := fileNameContentMap(c, lg)
 	err := fileIndexing(fileIndexer, c)
 	if err != nil {
 		return err

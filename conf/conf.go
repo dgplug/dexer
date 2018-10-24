@@ -15,7 +15,7 @@ type Configuration struct {
 }
 
 // NewConfig is a function for creating a new configuration
-func NewConfig(filename string) Configuration {
+func NewConfig(filename string, lg *logger.Logger) Configuration {
 	config := Configuration{}
 	name := "config.json"
 	if filename != "NULL" {
@@ -23,9 +23,9 @@ func NewConfig(filename string) Configuration {
 	}
 	file, err := os.Open(name)
 	defer file.Close()
-	logger.Must(err)
+	lg.Must(err)
 	decoder := json.NewDecoder(file)
 	err = decoder.Decode(&config)
-	logger.Must(err)
+	lg.Must(err)
 	return config
 }

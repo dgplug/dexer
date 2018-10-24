@@ -18,15 +18,15 @@ func (l *Logger) Write(p []byte) (n int, err error) {
 	return n, err
 }
 
+func (l *Logger) Must(e error) {
+	if e != nil {
+		panic(e)
+	}
+}
+
 func NewLogger(fname string) *Logger {
 	temp := Logger{
 		FileName: fname,
 	}
 	return &temp
-}
-
-func Must(e error) {
-	if e != nil {
-		panic(e)
-	}
 }
