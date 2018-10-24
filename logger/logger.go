@@ -18,10 +18,13 @@ func (l *Logger) Write(p []byte) (n int, err error) {
 	return n, err
 }
 
-func (l *Logger) Must(e error) {
+func (l *Logger) Must(e error, logstring string) {
 	if e != nil {
+		l.Write([]byte(e.Error()))
 		panic(e)
 	}
+
+	l.Write([]byte(logstring + "\n"))
 }
 
 func NewLogger(fname string) *Logger {

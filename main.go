@@ -36,11 +36,11 @@ func SearchFile(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	flag.Parse()
-	config = conf.NewConfig(*configFlag)
 	lg = logger.NewLogger("logfile")
+	config = conf.NewConfig(*configFlag, lg)
 	fmt.Println("Refreshing the index")
-	err := indexer.NewIndex(config)
-	lg.Must(err)
+	err := indexer.NewIndex(config, lg)
+	lg.Must(err, "Index Succesfully Created")
 	fmt.Printf("Serving on %v \n", config.Port)
 	router := mux.NewRouter()
 	router.HandleFunc("/index", IndexFile).Methods("GET")

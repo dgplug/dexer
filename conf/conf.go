@@ -23,9 +23,9 @@ func NewConfig(filename string, lg *logger.Logger) Configuration {
 	}
 	file, err := os.Open(name)
 	defer file.Close()
-	lg.Must(err)
+	lg.Must(err, "Configuration File opened succesfully")
 	decoder := json.NewDecoder(file)
 	err = decoder.Decode(&config)
-	lg.Must(err)
+	lg.Must(err, "JSON data successfully read")
 	return config
 }

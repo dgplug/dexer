@@ -17,7 +17,7 @@ type FileIndexer struct {
 }
 
 type FileIndexerArray struct {
-	IndexrArray     []FileIndexer
+	IndexerArray    []FileIndexer
 	FileIndexLogger *logger.Logger
 }
 
@@ -40,7 +40,7 @@ func fileIndexing(fileIndexer FileIndexerArray, c conf.Configuration) error {
 	if err != nil {
 		return err
 	}
-	for _, fileIndex := range fileIndexer.IndexrArray {
+	for _, fileIndex := range fileIndexer.IndexerArray {
 		index.Index(fileIndex.FileName, fileIndex.FileContent)
 	}
 	defer index.Close()
@@ -48,24 +48,24 @@ func fileIndexing(fileIndexer FileIndexerArray, c conf.Configuration) error {
 }
 
 func fileNameContentMap(c conf.Configuration, lg *logger.Logger) FileIndexerArray {
-	var ROOTPATH = c.RootDirectory
+	var root = c.RootDirectory
 	var files []string
 	fileIndexer := FileIndexerArray{
 		FileIndexLogger: lg,
 	}
 
-	err := filepath.Walk(ROOTPATH, func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if !info.IsDir() {
 			files = append(files, path)
 		}
 		return nil
 	})
-	fileIndexer.FileIndexLogger.Must(err)
+	fileIndexer.FileIndexLogger.Must(err, "Successfully traversed "+root)
 	for _, filename := range files {
 		content, err := utility.GetContent(filename)
-		fileIndexer.FileIndexLogger.Must(err)
+		fileIndexer.FileIndexLogger.Must(err, "Successfully obtained content from "+filename)
 		filesIndex := NewFileIndexer(filename, content)
-		fileIndexer.IndexrArray = append(fileIndexer.IndexrArray, filesIndex)
+		fileIndexer.IndexerArray = append(fileIndexer.IndexerArray, filesIndex)
 	}
 	return fileIndexer
 }
