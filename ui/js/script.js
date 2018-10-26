@@ -3,14 +3,18 @@ function keyuphandler(){
 }
 
 function search(){
-    $(".search-results").html("");
-    $.ajax({url: "/search/"+$(".search-field").val(), success: receiver});
+    var searchValue = $(".search-field").val();
+    if(searchValue === ""){
+        $(".search-result-header").html("Type in the box above");
+    }
+    $.ajax({url: "/search/"+searchValue, success: receiver});
 }
 
 function receiver(result){
     var json = jQuery.parseJSON(result);
     if(json.length === 0){
         $(".search-result-header").html("Sorry no results found.");
+        $(".search-results").html("");
         return;
     }
     $(".search-result-header").html("Results found: " + json.length);
