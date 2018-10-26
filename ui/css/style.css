@@ -1,0 +1,42 @@
+body{
+    margin: 0%;
+    background-color: #eeeeee;
+    margin-bottom: 100px;
+}
+
+.header{
+    text-align: center;
+    padding-top: 20px;
+    padding-bottom: 25px;
+    font-family: sans-serif;
+    font-size: 15px;
+    color: #ffffff;
+    background-color: #e68a00;
+}
+
+.index-box{
+    width: 100%;
+    text-align: center;
+    padding-top: 70px;
+    padding-bottom: 100px;
+}
+
+.search-box{
+    width: 100%;
+    text-align: center;
+    padding-top: 20px;
+}
+
+.footer{
+    position: fixed;
+    background-color: #1a0d00;
+    color: white;
+    text-align: center;
+    padding-top: 50px;
+    font-family: sans-serif;
+    font-size: 10px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    margin-bottom: 0px;
+}

@@ -35,16 +35,11 @@ func init() {
 	}
 }
 
-type UiData struct {
-	isNew bool
-}
-
 // RootHandler is the controller responsible for the frontend
 func RootHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles(templates...)
 	lg.Must(err, "Template Parsed Successfully")
-	data := UiData{isNew: true}
-	t.ExecuteTemplate(w, "index", data)
+	t.ExecuteTemplate(w, "index", nil)
 }
 
 // IndexFile is the controller that helps with indexing the file
@@ -66,9 +61,9 @@ func main() {
 	lg.Must(err, "Index Succesfully Created")
 	fmt.Printf("Serving on %v \n", config.Port)
 	router := mux.NewRouter()
+	router.HandleFunc("/", RootHandler)
 	router.HandleFunc("/index", IndexFile).Methods("GET")
 	router.HandleFunc("/search/{query}", SearchFile).Methods("GET")
-	router.HandleFunc("/", RootHandler)
-	loggedRouter := handlers.LoggingHandler(lg, router)
-	log.Fatal(http.ListenAndServe(config.Port, loggedRouter))
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./ui/"))))
+	log.Fatal(http.ListenAndServe(config.Port, handlers.LoggingHandler(lg, router)))
 }

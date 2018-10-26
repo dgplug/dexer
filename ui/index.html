@@ -5,16 +5,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>File Indexer</title>
+    <link rel="stylesheet" href="/static/css/style.css"/>
 </head>
 <body>
     {{ template "header" }}
-
-    {{ if .isNew }}
-        {{ template "new_index" }}
-    {{ else }}
-        {{ template "search" }}
-    {{ end }}
-
+    {{ template "new_index" }}
+    {{ template "search" }}
     {{ template "footer" }}
 </body>
 </html>
