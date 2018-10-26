@@ -6,6 +6,7 @@ function search(){
     var searchValue = $(".search-field").val();
     if(searchValue === ""){
         $(".search-result-header").html("Type in the box above");
+        $(".search-results").html("");
     }
     $.ajax({url: "/search/"+searchValue, success: receiver});
 }
