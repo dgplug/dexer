@@ -31,7 +31,6 @@ func init() {
 		"ui/layout/header.html",
 		"ui/layout/footer.html",
 		"ui/layout/search.html",
-		"ui/layout/new_index.html",
 	}
 }
 
