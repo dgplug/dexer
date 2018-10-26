@@ -25,11 +25,15 @@ func init() {
 	config = conf.NewConfig(*configFlag, lg)
 }
 
+// RootHandler is the controller responsible for the frontend
+func RootHandler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "ui/index.html")
+}
+
 // IndexFile is the controller that helps with indexing the file
 func IndexFile(w http.ResponseWriter, r *http.Request) {
 	err := indexer.NewIndex(config, lg)
 	json.NewEncoder(w).Encode(err)
-	return
 }
 
 // SearchFile is the controller that helps with indexing the file
@@ -37,7 +41,6 @@ func SearchFile(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	searchResult := indexer.Search(config.IndexFilename, params["query"])
 	json.NewEncoder(w).Encode(searchResult.Hits)
-	return
 }
 
 func main() {
@@ -48,6 +51,7 @@ func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/index", IndexFile).Methods("GET")
 	router.HandleFunc("/search/{query}", SearchFile).Methods("GET")
+	router.HandleFunc("/", RootHandler)
 	loggedRouter := handlers.LoggingHandler(lg, router)
 	log.Fatal(http.ListenAndServe(config.Port, loggedRouter))
 }
