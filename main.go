@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/farhaanbukhsh/file-indexer/conf"
 	"github.com/farhaanbukhsh/file-indexer/indexer"
@@ -18,10 +17,17 @@ import (
 var configFlag = flag.String("config", "NULL", "To pass a different configuration file")
 
 var config conf.Configuration
+var lg *logger.Logger
+
+func init() {
+	flag.Parse()
+	lg = logger.NewLogger("logfile")
+	config = conf.NewConfig(*configFlag, lg)
+}
 
 // IndexFile is the controller that helps with indexing the file
 func IndexFile(w http.ResponseWriter, r *http.Request) {
-	err := indexer.NewIndex(config)
+	err := indexer.NewIndex(config, lg)
 	json.NewEncoder(w).Encode(err)
 	return
 }
@@ -35,15 +41,13 @@ func SearchFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	flag.Parse()
-	config = conf.NewConfig(*configFlag)
 	fmt.Println("Refreshing the index")
-	err := indexer.NewIndex(config)
-	logger.Must(err)
+	err := indexer.NewIndex(config, lg)
+	lg.Must(err, "Index Succesfully Created")
 	fmt.Printf("Serving on %v \n", config.Port)
 	router := mux.NewRouter()
 	router.HandleFunc("/index", IndexFile).Methods("GET")
 	router.HandleFunc("/search/{query}", SearchFile).Methods("GET")
-	loggedRouter := handlers.LoggingHandler(os.Stdout, router)
+	loggedRouter := handlers.LoggingHandler(lg, router)
 	log.Fatal(http.ListenAndServe(config.Port, loggedRouter))
 }

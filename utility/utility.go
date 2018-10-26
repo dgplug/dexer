@@ -4,15 +4,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-
-	"github.com/farhaanbukhsh/file-indexer/logger"
 )
 
 // GetContent is a function for retrieving data from file
-func GetContent(name string) string {
+func GetContent(name string) (string, error) {
 	data, err := ioutil.ReadFile(name)
-	logger.Must(err)
-	return string(data)
+	return string(data), err
 }
 
 // DeleteExistingIndex checks if the index exist if it does, then flushes it off
