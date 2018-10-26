@@ -3,6 +3,7 @@ function keyuphandler(){
 }
 
 function search(){
+    $(".search-results").html("");
     $.ajax({url: "/search/"+$(".search-field").val(), success: receiver});
 }
 
