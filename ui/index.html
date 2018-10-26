@@ -1,3 +1,4 @@
+{{ define "index" }}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +7,15 @@
     <title>File Indexer</title>
 </head>
 <body>
-    
+    {{ template "header" }}
+
+    {{ if .isNew }}
+        {{ template "new_index" }}
+    {{ else }}
+        {{ template "search" }}
+    {{ end }}
+
+    {{ template "footer" }}
 </body>
 </html>
+{{ end }}

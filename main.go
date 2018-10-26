@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 
@@ -18,16 +19,32 @@ var configFlag = flag.String("config", "NULL", "To pass a different configuratio
 
 var config conf.Configuration
 var lg *logger.Logger
+var templates []string
 
 func init() {
 	flag.Parse()
 	lg = logger.NewLogger("logfile")
 	config = conf.NewConfig(*configFlag, lg)
+
+	templates = []string{
+		"ui/index.html",
+		"ui/layout/header.html",
+		"ui/layout/footer.html",
+		"ui/layout/search.html",
+		"ui/layout/new_index.html",
+	}
+}
+
+type UiData struct {
+	isNew bool
 }
 
 // RootHandler is the controller responsible for the frontend
 func RootHandler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "ui/index.html")
+	t, err := template.ParseFiles(templates...)
+	lg.Must(err, "Template Parsed Successfully")
+	data := UiData{isNew: true}
+	t.ExecuteTemplate(w, "index", data)
 }
 
 // IndexFile is the controller that helps with indexing the file
