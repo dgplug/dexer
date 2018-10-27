@@ -41,12 +41,6 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 	t.ExecuteTemplate(w, "index", nil)
 }
 
-// IndexFile is the controller that helps with indexing the file
-func IndexFile(w http.ResponseWriter, r *http.Request) {
-	err := indexer.NewIndex(config, lg)
-	json.NewEncoder(w).Encode(err)
-}
-
 // SearchFile is the controller that helps with indexing the file
 func SearchFile(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
@@ -56,12 +50,10 @@ func SearchFile(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	fmt.Println("Refreshing the index")
-	err := indexer.NewIndex(config, lg)
-	lg.Must(err, "Index Succesfully Created")
+	go indexer.NewIndex(config, lg)
 	fmt.Printf("Serving on %v \n", config.Port)
 	router := mux.NewRouter()
 	router.HandleFunc("/", RootHandler)
-	router.HandleFunc("/index", IndexFile).Methods("GET")
 	router.HandleFunc("/search/{query}", SearchFile).Methods("GET")
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./ui/"))))
 	log.Fatal(http.ListenAndServe(config.Port, handlers.LoggingHandler(lg, router)))
