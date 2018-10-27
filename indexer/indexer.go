@@ -82,7 +82,7 @@ func NewIndex(c conf.Configuration, lg *logger.Logger) {
 	w := watcher.New()
 
 	// Only notify rename and move events.
-	w.FilterOps(watcher.Rename, watcher.Move, watcher.Create, watcher.Remove)
+	w.FilterOps(watcher.Rename, watcher.Move, watcher.Create, watcher.Remove, watcher.Write)
 
 	go func() {
 		for {
