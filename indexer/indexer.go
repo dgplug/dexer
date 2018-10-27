@@ -80,8 +80,6 @@ func NewFileIndexer(fname, fcontent string) FileIndexer {
 // NewIndex is a function to create new indexes
 func NewIndex(c conf.Configuration, lg *logger.Logger) {
 	w := watcher.New()
-
-	// Only notify rename and move events.
 	w.FilterOps(watcher.Rename, watcher.Move, watcher.Create, watcher.Remove, watcher.Write)
 
 	go func() {
@@ -99,7 +97,6 @@ func NewIndex(c conf.Configuration, lg *logger.Logger) {
 		}
 	}()
 
-	// Watch test_folder recursively for changes.
 	err := w.AddRecursive(c.RootDirectory)
 	lg.Must(err, "Successfully added "+c.RootDirectory+" to the watcher")
 
@@ -107,7 +104,6 @@ func NewIndex(c conf.Configuration, lg *logger.Logger) {
 		w.Wait()
 	}()
 
-	// Start the watching process - it'll check for changes every 100ms.
 	err = w.Start(time.Millisecond * 100)
 	lg.Must(err, "Successfully started the watcher")
 }
