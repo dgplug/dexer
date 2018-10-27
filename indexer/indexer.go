@@ -3,11 +3,13 @@ package indexer
 import (
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/blevesearch/bleve"
 	"github.com/farhaanbukhsh/file-indexer/conf"
 	"github.com/farhaanbukhsh/file-indexer/logger"
 	"github.com/farhaanbukhsh/file-indexer/utility"
+	"github.com/radovskyb/watcher"
 )
 
 // FileIndexer is a data structure to hold the content of the file
@@ -30,21 +32,16 @@ func Search(indexFilename string, searchWord string) *bleve.SearchResult {
 	return result
 }
 
-func fileIndexing(fileIndexer FileIndexerArray, c conf.Configuration) error {
+func fileIndexing(fileIndexer FileIndexerArray, c conf.Configuration) {
 	err := utility.DeleteExistingIndex(c.IndexFilename)
-	if err != nil {
-		return err
-	}
+	fileIndexer.FileIndexLogger.Must(err, "Successfully deleted previous index")
 	mapping := bleve.NewIndexMapping()
 	index, err := bleve.New(c.IndexFilename, mapping)
-	if err != nil {
-		return err
-	}
+	fileIndexer.FileIndexLogger.Must(err, "Successfully ran bleve for indexing")
 	for _, fileIndex := range fileIndexer.IndexerArray {
 		index.Index(fileIndex.FileName, fileIndex.FileContent)
 	}
 	defer index.Close()
-	return nil
 }
 
 func fileNameContentMap(c conf.Configuration, lg *logger.Logger) FileIndexerArray {
@@ -81,11 +78,36 @@ func NewFileIndexer(fname, fcontent string) FileIndexer {
 }
 
 // NewIndex is a function to create new indexes
-func NewIndex(c conf.Configuration, lg *logger.Logger) error {
-	fileIndexer := fileNameContentMap(c, lg)
-	err := fileIndexing(fileIndexer, c)
-	if err != nil {
-		return err
-	}
-	return nil
+func NewIndex(c conf.Configuration, lg *logger.Logger) {
+	w := watcher.New()
+
+	// Only notify rename and move events.
+	w.FilterOps(watcher.Rename, watcher.Move, watcher.Create, watcher.Remove)
+
+	go func() {
+		for {
+			select {
+			case event := <-w.Event:
+				lg.Must(nil, event.Name())
+				fileIndexer := fileNameContentMap(c, lg)
+				fileIndexing(fileIndexer, c)
+			case err := <-w.Error:
+				lg.Must(err, "")
+			case <-w.Closed:
+				return
+			}
+		}
+	}()
+
+	// Watch test_folder recursively for changes.
+	err := w.AddRecursive(c.RootDirectory)
+	lg.Must(err, "Successfully added "+c.RootDirectory+" to the watcher")
+
+	go func() {
+		w.Wait()
+	}()
+
+	// Start the watching process - it'll check for changes every 100ms.
+	err = w.Start(time.Millisecond * 100)
+	lg.Must(err, "Successfully started the watcher")
 }
