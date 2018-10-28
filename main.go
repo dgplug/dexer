@@ -15,7 +15,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var configFlag = flag.String("config", "NULL", "To pass a different configuration file")
+var configFlag = flag.String("c", "", "Use alternative config file.")
+var verboseFlag = flag.Bool("v", false, "Verbosely print the log output to Standard Output.")
 
 var config conf.Configuration
 var lg *logger.Logger
@@ -23,7 +24,7 @@ var templates []string
 
 func init() {
 	flag.Parse()
-	lg = logger.NewLogger("logfile")
+	lg = logger.NewLogger("logfile", *verboseFlag)
 	config = conf.NewConfig(*configFlag, lg)
 
 	templates = []string{

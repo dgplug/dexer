@@ -18,7 +18,7 @@ type Configuration struct {
 func NewConfig(filename string, lg *logger.Logger) Configuration {
 	config := Configuration{}
 	name := "config.json"
-	if filename != "NULL" {
+	if filename != "" {
 		name = filename
 	}
 	file, err := os.Open(name)

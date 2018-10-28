@@ -7,12 +7,16 @@ import (
 
 type Logger struct {
 	FileName string
+	verbose  bool
 }
 
 func (l *Logger) Write(p []byte) (n int, err error) {
 	file, err := os.OpenFile(l.FileName, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 	if err != nil {
 		return 0, err
+	}
+	if l.verbose == true {
+		n, err = os.Stdout.Write(p)
 	}
 	n, err = file.Write(p)
 	file.Close()
@@ -34,9 +38,10 @@ func formatLog(logstring string) string {
 	return "[" + logtime + "] " + logstring
 }
 
-func NewLogger(fname string) *Logger {
+func NewLogger(fname string, verbosity bool) *Logger {
 	temp := Logger{
 		FileName: fname,
+		verbose:  verbosity,
 	}
 	return &temp
 }
