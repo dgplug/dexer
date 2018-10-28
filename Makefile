@@ -13,14 +13,15 @@ logs:
 
 .PHONY: dev
 dev:
-	go get github.com/pilu/fresh
+	go run main.go
 
-.PHONY: build
-build:
-	fresh -c fresh.conf
-
+.PHONY: docker-build
 docker-build:
 	docker build -t file-indexer .
 
+.PHONY: docker-run
 docker-run: docker-build
 	docker run -it -p 8000:8000 file-indexer
+
+all:
+	go install github.com/farhaanbukhsh/file-indexer
