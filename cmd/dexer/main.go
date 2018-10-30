@@ -4,10 +4,10 @@ import (
 	"flag"
 	"os"
 
-	"github.com/farhaanbukhsh/file-indexer/conf"
-	"github.com/farhaanbukhsh/file-indexer/indexer"
-	"github.com/farhaanbukhsh/file-indexer/logger"
-	"github.com/farhaanbukhsh/file-indexer/server"
+	"github.com/farhaanbukhsh/file-indexer/lib/conf"
+	"github.com/farhaanbukhsh/file-indexer/lib/indexer"
+	"github.com/farhaanbukhsh/file-indexer/lib/logger"
+	"github.com/farhaanbukhsh/file-indexer/lib/server"
 )
 
 var configFlag = flag.String("c", "", "Use alternative config file.")

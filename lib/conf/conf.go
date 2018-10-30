@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/farhaanbukhsh/file-indexer/logger"
+	"github.com/farhaanbukhsh/file-indexer/lib/logger"
 )
 
 // Configuration loads the config file

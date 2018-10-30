@@ -5,7 +5,6 @@ clean:
 .PHONY: logs
 logs:
 	make clean
-	make dev
 	mkdir logs
 	cp config.json logs/
 	pip3 install --user Faker

@@ -5,9 +5,9 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/farhaanbukhsh/file-indexer/conf"
-	"github.com/farhaanbukhsh/file-indexer/indexer"
-	"github.com/farhaanbukhsh/file-indexer/logger"
+	"github.com/farhaanbukhsh/file-indexer/lib/conf"
+	"github.com/farhaanbukhsh/file-indexer/lib/indexer"
+	"github.com/farhaanbukhsh/file-indexer/lib/logger"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )

@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/blevesearch/bleve"
-	"github.com/farhaanbukhsh/file-indexer/conf"
-	"github.com/farhaanbukhsh/file-indexer/logger"
-	"github.com/farhaanbukhsh/file-indexer/utility"
+	"github.com/farhaanbukhsh/file-indexer/lib/conf"
+	"github.com/farhaanbukhsh/file-indexer/lib/logger"
+	"github.com/farhaanbukhsh/file-indexer/lib/utility"
 	"github.com/radovskyb/watcher"
 )
 
@@ -79,6 +79,10 @@ func NewFileIndexer(fname, fcontent string) FileIndexer {
 
 // NewIndex is a function to create new indexes
 func NewIndex(c conf.Configuration, lg *logger.Logger) {
+
+	fileIndexer := fileNameContentMap(c, lg)
+	fileIndexing(fileIndexer, c)
+
 	lg.Must(nil, "Refreshing the index")
 	w := watcher.New()
 	w.FilterOps(watcher.Rename, watcher.Move, watcher.Create, watcher.Remove, watcher.Write)
