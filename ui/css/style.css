@@ -1,23 +1,20 @@
+@import url('https://fonts.googleapis.com/css?family=Luckiest+Guy');
+
 body{
     margin: 0%;
-    background-color: #eeeeee;
+    background-color: #3B3A35;
     margin-bottom: 100px;
+    color: #ffffff;
 }
 
 .header{
     text-align: center;
-    padding-top: 20px;
-    padding-bottom: 25px;
-    font-family: sans-serif;
-    font-size: 24px;
+    padding-top: 25px;
+    padding-bottom: 20px;
+    font-family: 'Luckiest Guy', cursive;
+    font-size: 50px;
     color: #ffffff;
-    background-color: #e68a00;
-}
-
-.flaunt{
-    text-align: center;
-    font-size: 10px;
-    padding-top: 5px;
+    background-color: #FB6648;
 }
 
 .index-box{
@@ -36,19 +33,23 @@ body{
 .search-field{
     width: 70%;
     margin-bottom: 100px;
+    border: none;
+    border-color: transparent;
+    padding: 10px;
+    background-color: #ECDFBD;
 }
 
 .search-results{
     width: 70%;
     margin-left: auto ;
     margin-right: auto ;
+    color: #111111;
 }
 
 .search-result-header{
     margin-bottom: 20px;
     font-size: 18px;
     font-family: sans-serif;
-    font-weight: bold;
 }
 
 .entry{
@@ -60,14 +61,18 @@ body{
 }
 .footer{
     position: fixed;
-    background-color: #1a0d00;
+    background-color: #20457C;
     color: white;
     text-align: center;
-    padding-top: 50px;
+    padding-top: 20px;
     font-family: sans-serif;
     font-size: 10px;
     bottom: 0px;
     left: 0px;
     right: 0px;
     margin-bottom: 0px;
+}
+
+.social-media{
+    padding: 10px;
 }
