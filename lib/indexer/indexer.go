@@ -1,6 +1,8 @@
 package indexer
 
 import (
+	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"time"
@@ -8,7 +10,6 @@ import (
 	"github.com/blevesearch/bleve"
 	"github.com/farhaanbukhsh/file-indexer/lib/conf"
 	"github.com/farhaanbukhsh/file-indexer/lib/logger"
-	"github.com/farhaanbukhsh/file-indexer/lib/utility"
 	"github.com/radovskyb/watcher"
 )
 
@@ -33,7 +34,7 @@ func Search(indexFilename string, searchWord string) *bleve.SearchResult {
 }
 
 func fileIndexing(fileIndexer FileIndexerArray, c conf.Configuration) {
-	err := utility.DeleteExistingIndex(c.IndexFilename)
+	err := DeleteExistingIndex(c.IndexFilename)
 	fileIndexer.FileIndexLogger.Must(err, "Successfully deleted previous index")
 	mapping := bleve.NewIndexMapping()
 	index, err := bleve.New(c.IndexFilename, mapping)
@@ -59,7 +60,7 @@ func fileNameContentMap(c conf.Configuration, lg *logger.Logger) FileIndexerArra
 	})
 	fileIndexer.FileIndexLogger.Must(err, "Successfully traversed "+root)
 	for _, filename := range files {
-		content, err := utility.GetContent(filename)
+		content, err := GetContent(filename)
 		fileIndexer.FileIndexLogger.Must(err, "Successfully obtained content from "+filename)
 		filesIndex := NewFileIndexer(filename, content)
 		fileIndexer.IndexerArray = append(fileIndexer.IndexerArray, filesIndex)
@@ -111,4 +112,21 @@ func NewIndex(c conf.Configuration, lg *logger.Logger) {
 
 	err = w.Start(time.Millisecond * 100)
 	lg.Must(err, "Successfully started the watcher")
+}
+
+// GetContent is a function for retrieving data from file
+func GetContent(name string) (string, error) {
+	data, err := ioutil.ReadFile(name)
+	return string(data), err
+}
+
+// DeleteExistingIndex checks if the index exist if it does, then flushes it off
+func DeleteExistingIndex(name string) error {
+	_, err := os.Stat(name)
+	if !os.IsNotExist(err) {
+		if err := os.RemoveAll(name); err != nil {
+			return fmt.Errorf("Can't Delete file: %v", err)
+		}
+	}
+	return nil
 }
