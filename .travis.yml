@@ -3,4 +3,9 @@ language: go
 go:
   - "1.x"
 
-script: go get github.com/farhaanbukhsh/file-indexer && go test -v 
+script: go test -v 
+
+notifications:
+  email:
+    on_success: change
+    on_failure: always
