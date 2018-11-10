@@ -45,11 +45,11 @@ func fileIndexing(fileIndexer FileIndexerArray, c conf.Configuration) {
 	defer index.Close()
 }
 
-func fileNameContentMap(c conf.Configuration, lg *logger.Logger) FileIndexerArray {
+func fileNameContentMap(c conf.Configuration) FileIndexerArray {
 	var root = c.RootDirectory
 	var files []string
 	fileIndexer := FileIndexerArray{
-		FileIndexLogger: lg,
+		FileIndexLogger: c.LogMan,
 	}
 
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
@@ -79,12 +79,12 @@ func NewFileIndexer(fname, fcontent string) FileIndexer {
 }
 
 // NewIndex is a function to create new indexes
-func NewIndex(c conf.Configuration, lg *logger.Logger) {
+func NewIndex(c conf.Configuration) {
 
-	fileIndexer := fileNameContentMap(c, lg)
+	fileIndexer := fileNameContentMap(c)
 	fileIndexing(fileIndexer, c)
 
-	lg.Must(nil, "Refreshing the index")
+	c.LogMan.Must(nil, "Refreshing the index")
 	w := watcher.New()
 	w.FilterOps(watcher.Rename, watcher.Move, watcher.Create, watcher.Remove, watcher.Write)
 
@@ -92,11 +92,11 @@ func NewIndex(c conf.Configuration, lg *logger.Logger) {
 		for {
 			select {
 			case event := <-w.Event:
-				lg.Must(nil, event.Name())
-				fileIndexer := fileNameContentMap(c, lg)
+				c.LogMan.Must(nil, event.Name())
+				fileIndexer := fileNameContentMap(c)
 				fileIndexing(fileIndexer, c)
 			case err := <-w.Error:
-				lg.Must(err, "")
+				c.LogMan.Must(err, "")
 			case <-w.Closed:
 				return
 			}
@@ -104,14 +104,14 @@ func NewIndex(c conf.Configuration, lg *logger.Logger) {
 	}()
 
 	err := w.AddRecursive(c.RootDirectory)
-	lg.Must(err, "Successfully added "+c.RootDirectory+" to the watcher")
+	c.LogMan.Must(err, "Successfully added "+c.RootDirectory+" to the watcher")
 
 	go func() {
 		w.Wait()
 	}()
 
 	err = w.Start(time.Millisecond * 100)
-	lg.Must(err, "Successfully started the watcher")
+	c.LogMan.Must(err, "Successfully started the watcher")
 }
 
 // GetContent is a function for retrieving data from file

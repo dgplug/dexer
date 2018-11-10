@@ -9,13 +9,15 @@ import (
 
 // Configuration loads the config file
 type Configuration struct {
-	RootDirectory string
-	IndexFilename string
-	Port          string
+	RootDirectory string `json:"RootDirectory"`
+	IndexFilename string `json:"IndexFilename"`
+	Port          string `json:"Port"`
+	LogFile       string `json:"LogFile"`
+	LogMan        *logger.Logger
 }
 
 // NewConfig is a function for creating a new configuration
-func NewConfig(filename string, lg *logger.Logger) Configuration {
+func NewConfig(filename string, verbosity bool) Configuration {
 	config := Configuration{}
 	name := "config.json"
 	if filename != "" {
@@ -23,9 +25,11 @@ func NewConfig(filename string, lg *logger.Logger) Configuration {
 	}
 	file, err := os.Open(name)
 	defer file.Close()
-	lg.Must(err, "Configuration File opened succesfully")
+	if err != nil {
+		panic(err)
+	}
 	decoder := json.NewDecoder(file)
-	err = decoder.Decode(&config)
-	lg.Must(err, "JSON data successfully read")
+	decoder.Decode(&config)
+	config.LogMan = logger.NewLogger(config.LogFile, verbosity)
 	return config
 }
