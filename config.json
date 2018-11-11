@@ -1,5 +1,6 @@
 {
     "RootDirectory": "logs",
     "IndexFilename": "irclogs.bleve",
-    "Port": ":8000"
+    "Port": ":8000",
+    "LogFile": "logfile"
 }
