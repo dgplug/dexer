@@ -3,7 +3,7 @@ language: go
 go:
   - "1.x"
 
-script: go test -v 
+script: go build ./... && go test -v ./... 
 
 notifications:
   email:
