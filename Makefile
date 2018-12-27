@@ -12,7 +12,7 @@ logs:
 
 .PHONY: dev
 dev:
-	go run main.go
+	go run cmd/dexer/main.go
 
 .PHONY: docker-build
 docker-build:
@@ -23,4 +23,4 @@ docker-run: docker-build
 	docker run -it -p 8000:8000 file-indexer
 
 all:
-	go install github.com/farhaanbukhsh/file-indexer
+	go install ./...

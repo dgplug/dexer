@@ -6,7 +6,6 @@ import (
 
 	"github.com/farhaanbukhsh/file-indexer/lib/conf"
 	"github.com/farhaanbukhsh/file-indexer/lib/indexer"
-	"github.com/farhaanbukhsh/file-indexer/lib/logger"
 	"github.com/farhaanbukhsh/file-indexer/lib/server"
 )
 
@@ -22,8 +21,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	lg := logger.NewLogger("logfile", *verboseFlag)
-	config := conf.NewConfig(*configFlag, lg)
-	go indexer.NewIndex(config, lg)
-	server.NewServer(config, lg).Start()
+	config := conf.NewConfig(*configFlag, *verboseFlag)
+	go indexer.NewIndex(config)
+	server.NewServer(config).Start()
 }

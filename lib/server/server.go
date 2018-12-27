@@ -7,7 +7,6 @@ import (
 
 	"github.com/farhaanbukhsh/file-indexer/lib/conf"
 	"github.com/farhaanbukhsh/file-indexer/lib/indexer"
-	"github.com/farhaanbukhsh/file-indexer/lib/logger"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
@@ -26,13 +25,12 @@ func init() {
 // Server Data Structure for holding the configuration and logger
 type Server struct {
 	conf conf.Configuration
-	lg   *logger.Logger
 }
 
 // RootHandler is the controller responsible for the frontend
 func (s *Server) RootHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles(templates...)
-	s.lg.Must(err, "Template Parsed Successfully")
+	s.conf.LogMan.Must(err, "Template Parsed Successfully")
 	t.ExecuteTemplate(w, "index", nil)
 }
 
@@ -45,19 +43,18 @@ func (s *Server) SearchFile(w http.ResponseWriter, r *http.Request) {
 
 // Start function starts the server
 func (s *Server) Start() {
-	s.lg.Must(nil, "Serving on "+s.conf.Port)
+	s.conf.LogMan.Must(nil, "Serving on "+s.conf.Port)
 	router := mux.NewRouter()
 	router.HandleFunc("/", s.RootHandler)
 	router.HandleFunc("/search/{query}", s.SearchFile).Methods("GET")
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./ui/"))))
-	s.lg.Must(http.ListenAndServe(s.conf.Port, handlers.LoggingHandler(s.lg, router)), "")
+	s.conf.LogMan.Must(http.ListenAndServe(s.conf.Port, handlers.LoggingHandler(s.conf.LogMan, router)), "")
 }
 
 // NewServer function creates a new server and return a pointer to it
-func NewServer(c conf.Configuration, l *logger.Logger) *Server {
+func NewServer(c conf.Configuration) *Server {
 	temp := Server{
 		conf: c,
-		lg:   l,
 	}
 	return &temp
 }
