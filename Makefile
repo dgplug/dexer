@@ -12,7 +12,7 @@ logs:
 
 .PHONY: dev
 dev:
-	go run main.go
+	go run cmd/dexer/main.go
 
 .PHONY: docker-build
 docker-build:
