@@ -2,7 +2,12 @@ language: go
 
 go:
   - 1.11.4
-  - release
+  - master
+
+env:
+  - GO111MODULE=on
+
+install: true
 
 script:
   - go test -v ./...
