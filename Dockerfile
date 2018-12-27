@@ -1,17 +1,10 @@
-FROM golang:1.11-alpine as build
+FROM golang:rc-alpine
+MAINTAINER Kuntal Majumder (hellozee@disroot.org)
 
 ENV APP_PATH=/go/src/github.com/farhaanbukhsh/file-indexer/
-
 COPY . ${APP_PATH}
-RUN cd ${APP_PATH} &&\
-  go build
-
-FROM alpine:latest
-
-COPY --from=build /go/src/github.com/farhaanbukhsh/file-indexer/file-indexer /usr/local/bin
-COPY ui /ui
-COPY config.json /config.json
-COPY logs /logs
-
-EXPOSE 8000
-CMD [ "file-indexer" ]
+RUN cd ${APP_PATH} && go install ./...
+COPY ui /go/ui
+COPY config.json /go/config.json
+COPY logs /go/logs
+CMD ["dexer"]
