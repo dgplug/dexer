@@ -23,4 +23,4 @@ docker-run: docker-build
 	docker run -it -p 8000:8000 file-indexer
 
 all:
-	go install github.com/farhaanbukhsh/file-indexer
+	go install ./...
