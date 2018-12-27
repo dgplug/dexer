@@ -16,40 +16,56 @@ This assumes that you have `Go` installed and setup.
 
 `pip3` and `python3` is what we need for development purpose.
 
-
 ### How to install
 
-1. [Install Go](https://golang.org/doc/install)
-2. Run the following commands
+> **Note** : Right now we are unable to provide binary/docker builds, so have to build the program the regular way 
+
+1. Install `git`.
+2. [Install Go](https://golang.org/doc/install) (need a version which supports Go Modules).
+3. Run the following commands :
 
 ```bash
+$ git clone https://github.com/farhaanbukhsh/file-indexer.git
 $ make all
 $ dexer
 ```
 
-Open http://localhost:8000 in your browser to open the user interface.
-
-The default configurations can be changed by editing the `config.json` file.
-```
+To use the program we need a configuration file which is provided by the `config.json` file. Here is an example of one:
+```json
 {
     "RootDirectory": "logs",
     "IndexFilename": "irclogs.bleve",
-    "Port": ":8000"
+    "Port": ":8000",
+    "LogFile": "logfile"
 }
 ```
+
+There are 4 entries :
+
+- **RootDirectory** : Location of the logs which we want to search through.
+- **IndexFilename** : The file where `bleve` will store all the information related to indexing.
+- **Port** : The port on which the server will be run.
+- **LogFile** : The file which will be used to store the logs.
 
 ### API
 
 Once everything is working fine install the postman plugin for your browser. And from that plugin you need to hit the endpoint as:
 
-`localhost:8000/search/american`
+`localhost:<port>/search/american`
 
-Here american is the query word that I passed, make sure to open any file in the logs/ directory and find a word to search. It will look like this:
+Here, `port ` number passed to the program using the configuration file ,`american` is the query word that I passed, make sure to open any file in the logs/ directory and find a word to search. It will look like this:
 
 ![Missing screenshot](https://image.ibb.co/cWP5TA/postman-query.png "Postman Screenshot")
 
+### Use the Web Front End
+
+You can also visit `localhost:<port>` to use the web frontend which comes with the program to search.
+
+![Web Front End](https://i.ibb.co/x2FDb0F/Screenshot-20181227-114313.png)
 
 ### Run locally using docker
+
+> **Note** : The docker build will fail, due to the docker file not being updated along with rest of the program. 
 
 You can run the application using Docker in your local machine. It will use the `Dockerfile` instructions. Make sure you have [Docker](https://www.docker.com/) installed in your machine.
 
