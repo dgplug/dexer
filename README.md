@@ -18,7 +18,7 @@ This assumes that you have `Go` installed and setup.
 
 ### How to install
 
-> **Note** : Right now we are unable to provide binary builds, so have to build the program the regular way or you can build a docker container as given in the end of this README.
+> **Note** : Right now we are unable to provide binary builds, so have to build the program the regular way or you can build a [docker](#run-locally-using-docker) container.
 
 1. Install `git`.
 2. [Install Go](https://golang.org/doc/install) (need a version which supports Go Modules).
