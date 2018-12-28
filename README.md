@@ -1,4 +1,4 @@
-## File Indexer
+## File Indexer [![Build Status](https://travis-ci.org/farhaanbukhsh/file-indexer.svg?branch=master)](https://travis-ci.org/farhaanbukhsh/file-indexer)
 
 This is a simple project which reads files in the directory mentioned in the config file and indexes it. This then can be used to search the files present in the directory.
 
@@ -8,13 +8,13 @@ This is a simple project which reads files in the directory mentioned in the con
 
 This is a way of trying to index the logs file in [dgplug](https://dgplug.org/) so that we can easily find the files in which a word has occured in the file.
 
-
-
 #### Dependency
 
 This assumes that you have `Go` installed and setup.
 
 `pip3` and `python3` is what we need for development purpose.
+
+
 
 ### How to install
 
