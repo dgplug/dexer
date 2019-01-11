@@ -1,4 +1,4 @@
-## File Indexer [![Build Status](https://travis-ci.org/farhaanbukhsh/file-indexer.svg?branch=master)](https://travis-ci.org/farhaanbukhsh/file-indexer)
+## File Indexer [![Build Status](https://travis-ci.org/dgplug/dexer.svg?branch=master)](https://travis-ci.org/dgplug/dexer)
 
 This is a simple project which reads files in the directory mentioned in the config file and indexes it. This then can be used to search the files present in the directory.
 
@@ -25,8 +25,8 @@ This assumes that you have `Go` installed and setup.
 3. Run the following commands :
 
 ```bash
-$ git clone https://github.com/farhaanbukhsh/file-indexer.git
-$ cd file-indexer
+$ git clone https://github.com/dgplug/dexer.git
+$ cd dexer
 $ make all
 $ dexer
 ```
@@ -66,15 +66,15 @@ You can also visit `localhost:<port>` to use the web frontend which comes with t
 
 ### Run locally using docker
 
-> **Note** : The docker build will fail, due to the docker file not being updated along with rest of the program. 
+> **Note** : The docker build will fail, due to the docker file not being updated along with rest of the program.
 
 You can run the application using Docker in your local machine. It will use the `Dockerfile` instructions. Make sure you have [Docker](https://www.docker.com/) installed in your machine.
 
 Run the following commands to build and run the docker image.
 
 ```bash
-$ git clone https://github.com/farhaanbukhsh/file-indexer.git
-$ cd file-indexer
+$ git clone https://github.com/dgplug/dexer.git
+$ cd dexer
 $ make docker-build # builds docker image
 $ make docker-run # runs the image in new container
 ```

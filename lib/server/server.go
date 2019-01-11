@@ -5,8 +5,8 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/farhaanbukhsh/file-indexer/lib/conf"
-	"github.com/farhaanbukhsh/file-indexer/lib/indexer"
+	"github.com/dgplug/dexer/lib/conf"
+	"github.com/dgplug/dexer/lib/indexer"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )

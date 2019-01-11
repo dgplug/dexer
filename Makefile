@@ -16,11 +16,11 @@ dev:
 
 .PHONY: docker-build
 docker-build:
-	docker build -t file-indexer .
+	docker build -t dexer .
 
 .PHONY: docker-run
 docker-run: docker-build
-	docker run -it -p 8000:8000 file-indexer
+	docker run -it -p 8000:8000 dexer
 
 all:
 	go install ./...

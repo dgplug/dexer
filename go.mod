@@ -1,4 +1,4 @@
-module github.com/farhaanbukhsh/file-indexer
+module github.com/dgplug/dexer
 
 go 1.11
 
