@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/farhaanbukhsh/file-indexer/lib/logger"
+	"github.com/dgplug/dexer/lib/logger"
 )
 
 // Configuration loads the config file

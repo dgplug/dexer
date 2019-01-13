@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/blevesearch/bleve"
-	"github.com/farhaanbukhsh/file-indexer/lib/conf"
-	"github.com/farhaanbukhsh/file-indexer/lib/logger"
+	"github.com/dgplug/dexer/lib/conf"
+	"github.com/dgplug/dexer/lib/logger"
 	"github.com/radovskyb/watcher"
 )
 

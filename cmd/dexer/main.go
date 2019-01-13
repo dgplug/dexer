@@ -4,9 +4,9 @@ import (
 	"flag"
 	"os"
 
-	"github.com/farhaanbukhsh/file-indexer/lib/conf"
-	"github.com/farhaanbukhsh/file-indexer/lib/indexer"
-	"github.com/farhaanbukhsh/file-indexer/lib/server"
+	"github.com/dgplug/dexer/lib/conf"
+	"github.com/dgplug/dexer/lib/indexer"
+	"github.com/dgplug/dexer/lib/server"
 )
 
 var configFlag = flag.String("c", "", "Use alternative config file.")

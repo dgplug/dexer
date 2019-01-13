@@ -1,7 +1,7 @@
 FROM golang:rc-alpine
 MAINTAINER Kuntal Majumder (hellozee@disroot.org)
 
-ENV APP_PATH=/go/src/github.com/farhaanbukhsh/file-indexer/
+ENV APP_PATH=/go/src/github.com/dgplug/dexer/
 COPY . ${APP_PATH}
 RUN cd ${APP_PATH} && go install ./...
 COPY ui /go/ui
