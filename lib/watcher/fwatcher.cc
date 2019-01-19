@@ -4,7 +4,7 @@ dexer::fwatcher::fwatcher(std::string path, chr::duration<int, std::milli> delay
     search_path(path), _delay(delay)
 {
     for(auto &file : fs::recursive_directory_iterator(path)){
-        _paths.at(file.path()) = fs::last_write_time(file);
+        _paths[file.path()] = fs::last_write_time(file);
     }
 }
 
@@ -24,7 +24,7 @@ dexer::fwatcher::start(const std::function<void(std::string, dexer::file_status)
         auto last_write = fs::last_write_time(file);
         
         if(!contains(file.path())){
-            _paths.at(file.path()) = last_write;
+            _paths[file.path()] = last_write;
             action(file.path(), dexer::file_status::create);
             continue;
         }
