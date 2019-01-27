@@ -20,8 +20,12 @@ type FileIndexer struct {
 }
 
 type FileIndexerArray struct {
-	IndexerArray    []FileIndexer
-	FileIndexLogger *logger.Logger
+	IndexerArray []FileIndexer
+	fLogger      *logger.Logger
+}
+
+func (farray *FileIndexerArray) Must(e error, logstring string) {
+	farray.fLogger.Must(e, logstring)
 }
 
 // Search function is used to search the string in the file and return the index
@@ -42,11 +46,11 @@ func Search(indexFilename string, searchWord string) *bleve.SearchResult {
 func fileIndexing(fileIndexer FileIndexerArray, c conf.Configuration) {
 	// check if previously index exists and delete if present
 	err := DeleteExistingIndex(c.IndexFilename)
-	fileIndexer.FileIndexLogger.Must(err, "Successfully deleted previous index")
+	fileIndexer.Must(err, "Successfully deleted previous index")
 	// maps new index
 	mapping := bleve.NewIndexMapping()
 	index, err := bleve.New(c.IndexFilename, mapping)
-	fileIndexer.FileIndexLogger.Must(err, "Successfully ran bleve for indexing")
+	fileIndexer.Must(err, "Successfully ran bleve for indexing")
 	// updates the value of index in the IndexerArray
 	for _, fileIndex := range fileIndexer.IndexerArray {
 		index.Index(fileIndex.FileName, fileIndex.FileContent)
@@ -59,7 +63,7 @@ func fileNameContentMap(c conf.Configuration) FileIndexerArray {
 	var root = c.RootDirectory
 	var files []string
 	fileIndexer := FileIndexerArray{
-		FileIndexLogger: c.LogMan,
+		fLogger: c.LogMan,
 	}
 	// visits each file starting from root directory and adds path to files array
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
@@ -69,10 +73,10 @@ func fileNameContentMap(c conf.Configuration) FileIndexerArray {
 		return nil
 	})
 	// traverses each file and adds index and returns it
-	fileIndexer.FileIndexLogger.Must(err, "Successfully traversed "+root)
+	fileIndexer.Must(err, "Successfully traversed "+root)
 	for _, filename := range files {
 		content, err := GetContent(filename)
-		fileIndexer.FileIndexLogger.Must(err, "Successfully obtained content from "+filename)
+		fileIndexer.Must(err, "Successfully obtained content from "+filename)
 		filesIndex := NewFileIndexer(filename, content)
 		fileIndexer.IndexerArray = append(fileIndexer.IndexerArray, filesIndex)
 	}
