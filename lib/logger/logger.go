@@ -10,6 +10,10 @@ type Logger struct {
 	verbose  bool
 }
 
+type Loggable interface {
+    func Must(e error, logstring string)
+}
+
 func (l *Logger) Write(p []byte) (n int, err error) {
 	file, err := os.OpenFile(l.FileName, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 	if err != nil {
