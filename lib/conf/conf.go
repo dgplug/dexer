@@ -13,7 +13,15 @@ type Configuration struct {
 	IndexFilename string `json:"IndexFilename"`
 	Port          string `json:"Port"`
 	LogFile       string `json:"LogFile"`
-	LogMan        *logger.Logger
+	cLogger       *logger.Logger
+}
+
+func (c *Configuration) Must(e error, logstring string) {
+	c.cLogger.Must(e, logstring)
+}
+
+func (c *Configuration) GetLogger() *logger.Logger {
+	return c.cLogger
 }
 
 // NewConfig is a function for creating a new configuration
@@ -30,6 +38,6 @@ func NewConfig(filename string, verbosity bool) Configuration {
 	}
 	decoder := json.NewDecoder(file)
 	decoder.Decode(&config)
-	config.LogMan = logger.NewLogger(config.LogFile, verbosity)
+	config.cLogger = logger.NewLogger(config.LogFile, verbosity)
 	return config
 }

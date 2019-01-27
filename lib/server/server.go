@@ -27,10 +27,14 @@ type Server struct {
 	conf conf.Configuration
 }
 
+func (s *Server) Must(e error, logstring string) {
+	s.conf.Must(e, logstring)
+}
+
 // RootHandler is the controller responsible for the frontend
 func (s *Server) RootHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles(templates...)
-	s.conf.LogMan.Must(err, "Template Parsed Successfully")
+	s.Must(err, "Template Parsed Successfully")
 	t.ExecuteTemplate(w, "index", nil)
 }
 
@@ -43,12 +47,12 @@ func (s *Server) SearchFile(w http.ResponseWriter, r *http.Request) {
 
 // Start function starts the server
 func (s *Server) Start() {
-	s.conf.LogMan.Must(nil, "Serving on "+s.conf.Port)
+	s.Must(nil, "Serving on "+s.conf.Port)
 	router := mux.NewRouter()
 	router.HandleFunc("/", s.RootHandler)
 	router.HandleFunc("/search/{query}", s.SearchFile).Methods("GET")
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./ui/"))))
-	s.conf.LogMan.Must(http.ListenAndServe(s.conf.Port, handlers.LoggingHandler(s.conf.LogMan, router)), "")
+	s.Must(http.ListenAndServe(s.conf.Port, handlers.LoggingHandler(s.conf.GetLogger(), router)), "")
 }
 
 // NewServer function creates a new server and return a pointer to it

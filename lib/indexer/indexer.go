@@ -63,7 +63,7 @@ func fileNameContentMap(c conf.Configuration) FileIndexerArray {
 	var root = c.RootDirectory
 	var files []string
 	fileIndexer := FileIndexerArray{
-		fLogger: c.LogMan,
+		fLogger: c.GetLogger(),
 	}
 	// visits each file starting from root directory and adds path to files array
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
@@ -99,7 +99,7 @@ func NewIndex(c conf.Configuration) {
 	fileIndexer := fileNameContentMap(c)
 	fileIndexing(fileIndexer, c)
 
-	c.LogMan.Must(nil, "Refreshing the index")
+	c.Must(nil, "Refreshing the index")
 	// adds a watcher w which watches files change
 	w := watcher.New()
 	w.FilterOps(watcher.Rename, watcher.Move, watcher.Create, watcher.Remove, watcher.Write)
@@ -109,11 +109,11 @@ func NewIndex(c conf.Configuration) {
 		for {
 			select {
 			case event := <-w.Event:
-				c.LogMan.Must(nil, event.Name())
+				c.Must(nil, event.Name())
 				fileIndexer := fileNameContentMap(c)
 				fileIndexing(fileIndexer, c)
 			case err := <-w.Error:
-				c.LogMan.Must(err, "")
+				c.Must(err, "")
 			case <-w.Closed:
 				return
 			}
@@ -121,7 +121,7 @@ func NewIndex(c conf.Configuration) {
 	}()
 
 	err := w.AddRecursive(c.RootDirectory)
-	c.LogMan.Must(err, "Successfully added "+c.RootDirectory+" to the watcher")
+	c.Must(err, "Successfully added "+c.RootDirectory+" to the watcher")
 
 	// blocks until all operation has been successfully
 	go func() {
@@ -130,7 +130,7 @@ func NewIndex(c conf.Configuration) {
 
 	// watcher restarts after every 100ms
 	err = w.Start(time.Millisecond * 100)
-	c.LogMan.Must(err, "Successfully started the watcher")
+	c.Must(err, "Successfully started the watcher")
 }
 
 // GetContent is a function for retrieving data from file
