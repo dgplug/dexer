@@ -11,7 +11,7 @@ type Logger struct {
 }
 
 type Loggable interface {
-    func Must(e error, logstring string)
+    Must(e error, logstring string)
 }
 
 func (l *Logger) Write(p []byte) (n int, err error) {
