@@ -24,40 +24,51 @@ type FileIndexerArray struct {
 	FileIndexLogger *logger.Logger
 }
 
+// Search function is used to search the string in the file and return the index
 func Search(indexFilename string, searchWord string) *bleve.SearchResult {
+	// opens the index file using bleve
 	index, _ := bleve.Open(indexFilename)
+	// closes file after the function completes its execution
 	defer index.Close()
+	// makes query to search the string
 	query := bleve.NewQueryStringQuery(searchWord)
 	request := bleve.NewSearchRequest(query)
+	// matches the keyword if any from the index created and returns
 	result, _ := index.Search(request)
 	return result
 }
 
+// fileIndexing function is used to create an index
 func fileIndexing(fileIndexer FileIndexerArray, c conf.Configuration) {
+	// check if previously index exists and delete if present
 	err := DeleteExistingIndex(c.IndexFilename)
 	fileIndexer.FileIndexLogger.Must(err, "Successfully deleted previous index")
+	// maps new index
 	mapping := bleve.NewIndexMapping()
 	index, err := bleve.New(c.IndexFilename, mapping)
 	fileIndexer.FileIndexLogger.Must(err, "Successfully ran bleve for indexing")
+	// updates the value of index in the IndexerArray
 	for _, fileIndex := range fileIndexer.IndexerArray {
 		index.Index(fileIndex.FileName, fileIndex.FileContent)
 	}
 	defer index.Close()
 }
 
+// fileNameContentMap function populates the index
 func fileNameContentMap(c conf.Configuration) FileIndexerArray {
 	var root = c.RootDirectory
 	var files []string
 	fileIndexer := FileIndexerArray{
 		FileIndexLogger: c.LogMan,
 	}
-
+	// visits each file starting from root directory and adds path to files array
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if !info.IsDir() {
 			files = append(files, path)
 		}
 		return nil
 	})
+	// traverses each file and adds index and returns it
 	fileIndexer.FileIndexLogger.Must(err, "Successfully traversed "+root)
 	for _, filename := range files {
 		content, err := GetContent(filename)
@@ -85,9 +96,11 @@ func NewIndex(c conf.Configuration) {
 	fileIndexing(fileIndexer, c)
 
 	c.LogMan.Must(nil, "Refreshing the index")
+	// adds a watcher w which watches files change
 	w := watcher.New()
 	w.FilterOps(watcher.Rename, watcher.Move, watcher.Create, watcher.Remove, watcher.Write)
 
+	// in case of file change assign new index
 	go func() {
 		for {
 			select {
@@ -106,10 +119,12 @@ func NewIndex(c conf.Configuration) {
 	err := w.AddRecursive(c.RootDirectory)
 	c.LogMan.Must(err, "Successfully added "+c.RootDirectory+" to the watcher")
 
+	// blocks until all operation has been successfully
 	go func() {
 		w.Wait()
 	}()
 
+	// watcher restarts after every 100ms
 	err = w.Start(time.Millisecond * 100)
 	c.LogMan.Must(err, "Successfully started the watcher")
 }
