@@ -22,6 +22,7 @@ type Watcher struct {
 	searchPath string
 	delay      time.Duration
 	logMan     *logger.Logger
+	isRunning  bool
 }
 
 func (w *Watcher) Must(e error, logstring string) {
@@ -29,7 +30,6 @@ func (w *Watcher) Must(e error, logstring string) {
 }
 
 func (w *Watcher) Start(action func(name string, status FileStatus)) {
-	time.Sleep(w.delay)
 
 	for file := range w.paths {
 		if _, err := os.Stat(file); err != nil {
@@ -55,8 +55,15 @@ func (w *Watcher) Start(action func(name string, status FileStatus)) {
 		return nil
 	}
 
-	err := filepath.Walk(w.searchPath, pathIterator)
-	w.Must(err, "Unable to walk through the root directory")
+	for w.isRunning == true {
+		time.Sleep(w.delay)
+		err := filepath.Walk(w.searchPath, pathIterator)
+		w.Must(err, "Unable to walk through the root directory")
+	}
+}
+
+func (w *Watcher) Stop() {
+	w.isRunning = false
 }
 
 func NewWatcher(c conf.Configuration, waitDelay time.Duration) *Watcher {
@@ -65,6 +72,7 @@ func NewWatcher(c conf.Configuration, waitDelay time.Duration) *Watcher {
 		delay:      waitDelay,
 		paths:      make(map[string]time.Time),
 		logMan:     c.GetLogger(),
+		isRunning:  true,
 	}
 	writeTimings := func(p string, info os.FileInfo, err error) error {
 		w.paths[p] = info.ModTime()
