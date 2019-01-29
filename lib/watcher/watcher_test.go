@@ -13,6 +13,7 @@ func TestWatcher(t *testing.T) {
 	config := conf.NewConfig("config.json", false)
 	duration := 10 * time.Millisecond
 	w := NewWatcher(config, duration)
+
 	action := func(path string, status FileStatus) {
 		t.Log(path, status)
 	}
@@ -20,6 +21,7 @@ func TestWatcher(t *testing.T) {
 	go w.Start(action)
 
 	doChanges(t)
+	w.Stop()
 	cleanUp()
 }
 
