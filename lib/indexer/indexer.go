@@ -10,7 +10,7 @@ import (
 	"github.com/blevesearch/bleve"
 	"github.com/dgplug/dexer/lib/conf"
 	"github.com/dgplug/dexer/lib/logger"
-	"github.com/radovskyb/watcher"
+	"github.com/dgplug/dexer/lib/watcher"
 )
 
 // FileIndexer is a data structure to hold the content of the file
@@ -101,36 +101,15 @@ func NewIndex(c conf.Configuration) {
 
 	c.Must(nil, "Refreshing the index")
 	// adds a watcher w which watches files change
-	w := watcher.New()
-	w.FilterOps(watcher.Rename, watcher.Move, watcher.Create, watcher.Remove, watcher.Write)
+	w := watcher.NewWatcher(c, time.Millisecond*100)
 
-	// in case of file change assign new index
-	go func() {
-		for {
-			select {
-			case event := <-w.Event:
-				c.Must(nil, event.Name())
-				fileIndexer := fileNameContentMap(c)
-				fileIndexing(fileIndexer, c)
-			case err := <-w.Error:
-				c.Must(err, "")
-			case <-w.Closed:
-				return
-			}
-		}
-	}()
+	action := func(path string, status watcher.FileStatus) {
+		fileIndexer := fileNameContentMap(c)
+		fileIndexing(fileIndexer, c)
+		fmt.Println("yo")
+	}
 
-	err := w.AddRecursive(c.RootDirectory)
-	c.Must(err, "Successfully added "+c.RootDirectory+" to the watcher")
-
-	// blocks until all operation has been successfully
-	go func() {
-		w.Wait()
-	}()
-
-	// watcher restarts after every 100ms
-	err = w.Start(time.Millisecond * 100)
-	c.Must(err, "Successfully started the watcher")
+	go w.Start(action)
 }
 
 // GetContent is a function for retrieving data from file
