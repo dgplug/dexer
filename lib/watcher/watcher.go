@@ -28,7 +28,7 @@ func (w *Watcher) Must(e error, logstring string) {
 	w.logMan.Must(e, logstring)
 }
 
-func (w *Watcher) start(action func(name string, status FileStatus)) {
+func (w *Watcher) Start(action func(name string, status FileStatus)) {
 	time.Sleep(w.delay)
 
 	for file := range w.paths {
@@ -59,10 +59,10 @@ func (w *Watcher) start(action func(name string, status FileStatus)) {
 	w.Must(err, "Unable to walk through the root directory")
 }
 
-func NewWatcher(c conf.Configuration, delayInMilliSeconds time.Duration) *Watcher {
+func NewWatcher(c conf.Configuration, waitDelay time.Duration) *Watcher {
 	w := Watcher{
 		searchPath: c.RootDirectory,
-		delay:      delayInMilliSeconds,
+		delay:      waitDelay,
 		paths:      make(map[string]time.Time),
 		logMan:     c.GetLogger(),
 	}
