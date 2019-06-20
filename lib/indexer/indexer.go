@@ -21,11 +21,7 @@ type FileIndexer struct {
 
 type FileIndexerArray struct {
 	IndexerArray []FileIndexer
-	fLogger      *logger.Logger
-}
-
-func (farray *FileIndexerArray) Must(e error, logstring string) {
-	farray.fLogger.Must(e, logstring)
+	*logger.Logger
 }
 
 // Search function is used to search the string in the file and return the index
@@ -63,7 +59,7 @@ func fileNameContentMap(c conf.Configuration) FileIndexerArray {
 	var root = c.RootDirectory
 	var files []string
 	fileIndexer := FileIndexerArray{
-		fLogger: c.GetLogger(),
+		[]FileIndexer{}, c.GetLogger(),
 	}
 	// visits each file starting from root directory and adds path to files array
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {

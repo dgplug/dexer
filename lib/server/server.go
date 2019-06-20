@@ -24,11 +24,7 @@ func init() {
 
 // Server Data Structure for holding the configuration and logger
 type Server struct {
-	conf conf.Configuration
-}
-
-func (s *Server) Must(e error, logstring string) {
-	s.conf.Must(e, logstring)
+	conf.Configuration
 }
 
 // RootHandler is the controller responsible for the frontend
@@ -41,24 +37,22 @@ func (s *Server) RootHandler(w http.ResponseWriter, r *http.Request) {
 // SearchFile is the controller that helps with indexing the file
 func (s *Server) SearchFile(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	searchResult := indexer.Search(s.conf.IndexFilename, params["query"])
+	searchResult := indexer.Search(s.IndexFilename, params["query"])
 	json.NewEncoder(w).Encode(searchResult.Hits)
 }
 
 // Start function starts the server
 func (s *Server) Start() {
-	s.Must(nil, "Serving on "+s.conf.Port)
+	s.Must(nil, "Serving on "+s.Port)
 	router := mux.NewRouter()
 	router.HandleFunc("/", s.RootHandler)
 	router.HandleFunc("/search/{query}", s.SearchFile).Methods("GET")
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./ui/"))))
-	s.Must(http.ListenAndServe(s.conf.Port, handlers.LoggingHandler(s.conf.GetLogger(), router)), "")
+	s.Must(http.ListenAndServe(s.Port, handlers.LoggingHandler(s.GetLogger(), router)), "")
 }
 
 // NewServer function creates a new server and return a pointer to it
 func NewServer(c conf.Configuration) *Server {
-	temp := Server{
-		conf: c,
-	}
+	temp := Server{c}
 	return &temp
 }
